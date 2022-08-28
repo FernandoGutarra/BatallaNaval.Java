@@ -30,32 +30,48 @@ public class version_2 {
 	public static void cargar_barcos_a_tablero(int[][] tablero, int maxF, int maxC, int EspacioBarcos) {
 		int limit = 0;
 		int tamanio_barco = 0;
-		int tamanio_anterior_barco = tamanio_barco;
-		while (limit != EspacioBarcos) {
+		int maxF_r = (maxF - 1);
+		int maxC_r = (maxC - 1);
+		while (!(limit >= EspacioBarcos)) {
+			int tamanio_anterior_barco = tamanio_barco;
 			tamanio_barco++;
-			int fila_random = (int) (maxF * Math.random() + 1);
-			int colum_random = (int) (maxC * Math.random() + 1);
+			int fila_random = (int) (maxF_r * Math.random() + 1);
+			int colum_random = (int) (maxC_r * Math.random() + 1);
 			int ColumFinalBarco = (colum_random + tamanio_barco - 1);
 			boolean MePase = MePaseDeMaxC(ColumFinalBarco, maxC);
-			if (MePase == false) {
-				boolean valido = SiEntraBarco(fila_random, colum_random, tablero, ColumFinalBarco);
-				if (valido == true) {
-					ubicar_barco(fila_random, colum_random, tablero, ColumFinalBarco);
-					
-					if (tamanio_barco > LARGO_MAXIMO_BARCO) {
-						tamanio_barco = 0;
+			boolean limiteMasTamanioBarco = comprobar(limit, tamanio_barco, EspacioBarcos);
+			if (limiteMasTamanioBarco == false) {
+				if (MePase == false) {
+					boolean valido = SiEntraBarco(fila_random, colum_random, tablero, ColumFinalBarco);
+					if (valido == true) {
+						ubicar_barco(fila_random, colum_random, tablero, ColumFinalBarco);
+
+						if (tamanio_barco > LARGO_MAXIMO_BARCO) {
+							tamanio_barco = 0;
+						}
+					} else {
+						tamanio_barco = tamanio_anterior_barco;
 					}
+					limit = EspaciosUtilizadosBarcos(tablero, maxF, maxC);
 				} else {
 					tamanio_barco = tamanio_anterior_barco;
+					limit = EspaciosUtilizadosBarcos(tablero, maxF, maxC);
 				}
-				limit = EspaciosUtilizadosBarcos(tablero, maxF, maxC);
 			}
 			else {
-				tamanio_barco = tamanio_anterior_barco;
-				limit = EspaciosUtilizadosBarcos(tablero, maxF, maxC);
+				tamanio_barco=0;
 			}
 		}
 
+	}
+
+	private static boolean comprobar(int limit, int tamanio_barco, int EspacioBarco) {
+		boolean valido = false;
+		int suma = limit + tamanio_barco;
+		if (suma > EspacioBarco) {
+			valido = true;
+		}
+		return valido;
 	}
 
 	private static int EspaciosUtilizadosBarcos(int[][] tablero, int maxF, int maxC) {
@@ -72,7 +88,7 @@ public class version_2 {
 
 	private static boolean MePaseDeMaxC(int Colum, int maxC) {
 		boolean valido = true;
-		if (Colum >= 0 && Colum <= maxC-1) {
+		if (Colum >= 0 && Colum <= maxC - 1) {
 			valido = false;
 		}
 		return valido;
